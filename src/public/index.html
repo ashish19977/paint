@@ -36,7 +36,6 @@
             width: 59%;
             height: 75%;
             border: 2px  #145a32  solid;
-            background-color: rgb(27, 27, 27);
         }
         #canvas:hover{
             cursor: crosshair;
@@ -145,7 +144,8 @@
     }
 
     function selectColor(e){
-        lineColor=colors[e.explicitOriginalTarget.id]
+        console.log(e.target.style.backgroundColor)
+        lineColor=e.target.style.backgroundColor
         pencil.style.backgroundColor=lineColor
     }
 
@@ -155,6 +155,8 @@
     canvas.width=canvas.offsetWidth
     canvas.height=canvas.offsetHeight
     let ctx=canvas.getContext('2d')
+    ctx.fillStyle=canvasBackColor
+    ctx.fillRect(0,0,canvas.width,canvas.height)
     let position={x:0,y:0}
     document.addEventListener('mousedown',setPosition)
     document.addEventListener('mouseenter',setPosition)
@@ -191,7 +193,8 @@
         ctx.clearRect(0,0,canvas.width,canvas.height)
         canvasBackColor=(lineColor==='black')?'rgb(39,39,39)':lineColor
         canvasColorDiv.style.backgroundColor=canvasBackColor
-        canvas.style.backgroundColor=canvasBackColor
+        ctx.fillStyle=canvasBackColor
+        ctx.fillRect(0,0,canvas.width,canvas.height)
     }
 
     function download(){
@@ -208,18 +211,19 @@
     
 // we are activating the eraser
 let eraserCircle=document.getElementById('eraser')
+let tempColor=''
     function activateEraser(){
-        var tempColor=lineColor
+        tempColor=lineColor
         eraserCircle.style.display=eraserCircle.style.display===''?'block':''
         eraser=eraser?false:true
     }
 // on mouse over on canvas
    function moveEraser(){     
-    canvas.onmousemove=(e)=>{
-            if(!eraser){
-            canvas.style.cursor='crosshair'
-            return
-        }
+            canvas.onmousemove=(e)=>{
+                if(!eraser){
+                canvas.style.cursor='crosshair'
+                return
+            }
             canvas.style.cursor='none'
             eraserCircle.style.top =e.clientY+ "px"
             eraserCircle.style.left =e.clientX+ "px"
@@ -233,6 +237,7 @@ let eraserCircle=document.getElementById('eraser')
                 if(!eraser)return
                 lineCap='round'
                 lineWidth=2
+                lineColor=tempColor
             }
         }
     }
