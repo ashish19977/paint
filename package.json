@@ -16,7 +16,5 @@
     "url": "https://github.com/ashish19977/paint/issues"
   },
   "homepage": "https://github.com/ashish19977/paint#readme",
-  "dependencies": {
-    "express": "^4.17.1"
-  }
+  "dependencies": {}
 }
