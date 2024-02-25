@@ -1,245 +1,93 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="shortcut icon" href="icon.ico"/>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="shortcut icon" href="icon.ico" />
     <title>Drawpi</title>
     <style>
-        html,body{
-            height: 100%;
-            margin: 0;
-            padding: 0;
-        }
-        #container{
-            background-color: rgb(27, 27, 27);
-            height: 100%;
-            width: 100%;
-            display: grid;
-            grid-template-columns: repeat(18,auto);
-            grid-template-rows: repeat(15,auto);
-        }
-        #picker{
-            display: grid;
-            grid-row: 1/3;
-            grid-column: 1/19;
-            grid-template-columns: repeat(13,auto);
-            align-items: center;
-        }
-        #canvas-div{
-            grid-row: 4/15;
-            grid-column: 2/13;
-           display: grid;
-        }
-        #canvas{
-            position: absolute;
-            width: 59%;
-            height: 75%;
-            border: 2px  #145a32  solid;
-        }
-        #canvas:hover{
-            cursor: crosshair;
-        }
-        #canvas-controls{
-            grid-row: 4/15;
-            grid-column: 15/18;
-            display: flex;
-            justify-content: space-evenly;
-            align-items: center;
-            flex-direction: column;
-        }
-        .color{
-            height: 60%;
-            width: 50%;
-            border-radius: 5px;
-            border: 2px black solid;
-            transition: all .1s linear;
-        }
-        .color:hover{
-            cursor: pointer;
-            scale: 1.1
-        }
-        .color:active{
-            scale: 1;
-        }
-        #selected-color{
-            font-size: 30px;
-            color: white;
-            display: inline-flex;
-            width: 60%;
-            justify-content: space-evenly;
-            align-items: center;
-            height: 15px;
-            border-radius: 5px;
-        }
-        button{
-            color:  #6c007b ;
-            background-color:   #f7d2fc;
-            padding: 5px;
-            font-size: 14px;
-            border: none;
-            font-family: Georgia, 'Times New Roman', Times, serif;
-            border-radius: 5px;
-        }
-        button:hover{
-            cursor: pointer;
-            opacity: .7;
-            scale: .99;
-        }
-        #eraser{
-            position: absolute;
-            z-index: 9;
-            height: 1px;
-            width: 1px;
-            padding: 5px;
-            border-radius: 50%;
-            border: 1px solid black;
-            display: none;
-            background-color: whitesmoke;
-        }
-        @media screen and (max-width: 960px){
-            #canvas{width: 99%;height: 65%;}
-            #picker{grid-row:14/15;grid-column: 1/19;}
-            #canvas-div{grid-row:3/13;grid-column: 1/19;}
-            #canvas-controls{grid-row: 1/2;grid-column: 1/19;flex-direction: row;}
-            #selected-color{width: 10%;}
-        }
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        color: white;
+        overscroll-behavior: none;
+      }
+      #container {
+        box-sizing: border-box;
+        background-color: rgb(27, 27, 27);
+        height: 100%;
+        width: 100%;
+        display: grid;
+        grid-row-gap: 0.5em;
+        grid-template-rows: 2fr 18fr;
+        padding: 1em;
+      }
+      #canvas-container {
+        display: grid;
+        width: 100%;
+        height: 100%;
+      }
+      #canvas {
+        box-sizing: border-box;
+        width: 100%;
+        height: 100%;
+      }
+      #canvas:hover {
+        cursor: crosshair;
+      }
+      #colors-controls-container {
+        display: grid;
+        grid-gap: 0.5em;
+        justify-content: center;
+        grid-template-rows: 1fr 1fr;
+      }
+      #buttons-container {
+        display: grid;
+        grid-gap: 0.5em;
+        justify-content: center;
+        grid-template-columns: 1fr 1fr 1fr;
+      }
+      #eraser {
+        position: absolute;
+        z-index: 9;
+        height: 5px;
+        width: 5px;
+        padding: 5px;
+        border-radius: 50%;
+        border: 1px solid black;
+        display: none;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div id="container">
-        <div id="picker"></div>
-        <div id="canvas-div">
-            <div id="eraser" draggable="true"></div>
-            <canvas id="canvas" onmouseover="moveEraser()">
-            </canvas>
+      <div id="colors-controls-container">
+        <div id="colors-container">
+          Pencil color:
+          <input
+            type="color"
+            onchange="setCanvasOrPencilColor(event,'pencil')"
+            id="pencil-color-picker"
+          />
+          Canvas background color:
+          <input
+            type="color"
+            onchange="setCanvasOrPencilColor(event,'canvas')"
+            id="canvas-color-picker"
+          />
         </div>
-        <div id=canvas-controls>
-            <div id="selected-color">
-                <span style="transform: rotate(125deg)">&#9999</span>
-                <span id="pencil-color" style="background-color: black;width: 40px;height: 15px;border: 1px greenyellow solid;"></span>
-                <span>&#9633</span>
-                <span id="canvas-color" style="background-color: rgb(27, 27, 27);width: 40px;height: 15px;border: 1px greenyellow solid;;"></span>
-            </div>
-            <button onclick="clearCanvas()">Clear Canvas</button>
-            <button onclick="setCanvasColor()">Set Canvas Color</button>
-            <button onclick="activateEraser()">Eraser</button>
-            <button onclick="download()">Download</button>
+        <div id="buttons-container">
+          <button onclick="clearCanvas()">Clear Canvas</button>
+          <button onclick="activateEraser()">Eraser</button>
+          <button onclick="download()">Download</button>
         </div>
+      </div>
+      <div id="canvas-container">
+        <div id="eraser" draggable="true"></div>
+        <canvas id="canvas" onmouseover="moveEraser()"> </canvas>
+      </div>
     </div>
-</body>
-<script>
-    let eraser=false
-    let lineColor='black'
-    let lineWidth=2
-    let lineCap='round'
-    let canvasBackColor='rgb(27, 27, 27)'
-    let colors=['black','blue','green','orange','red','purple','yellow','cyan','crimson','coral','chartreuse','grey','white']
-    let picker=document.getElementById('picker')
-    let selectedColorDiv=document.getElementById('selected-color')
-    let pencil=document.getElementById('pencil-color')
-    let canvasColorDiv=document.getElementById('canvas-color')
-    for(let i=0;i<13;i++){
-        picker.innerHTML+='<div id='+i+' class=color onclick="selectColor(event)" style=background-color:'+colors[i]+'></div>'
-    }
-
-    function selectColor(e){
-        console.log(e.target.style.backgroundColor)
-        lineColor=e.target.style.backgroundColor
-        pencil.style.backgroundColor=lineColor
-    }
-
-    let canvas=document.getElementById('canvas')
-    // dyanmic canvas
-    
-    canvas.width=canvas.offsetWidth
-    canvas.height=canvas.offsetHeight
-    let ctx=canvas.getContext('2d')
-    ctx.fillStyle=canvasBackColor
-    ctx.fillRect(0,0,canvas.width,canvas.height)
-    let position={x:0,y:0}
-    document.addEventListener('mousedown',setPosition)
-    document.addEventListener('mouseenter',setPosition)
-    document.addEventListener('mousemove',draw)
-
-    function setPosition(e){
-        var rect = canvas.getBoundingClientRect()
-        position.x= (e.clientX - rect.left) / (rect.right - rect.left) * canvas.width,
-        position.y=(e.clientY - rect.top) / (rect.bottom - rect.top) * canvas.height
-    }
-    
-    function draw(e){
-        if(e.buttons!==1)
-            return
-
-        ctx.beginPath()
-        ctx.lineCap = 'round';
-        ctx.lineWidth=lineWidth
-        ctx.strokeStyle = lineColor
-        ctx.moveTo(position.x,position.y)
-        setPosition(e)
-        ctx.lineTo(position.x,position.y)
-        ctx.closePath()
-        ctx.stroke()
-    }
-    function clearCanvas(){
-        ctx.clearRect(0,0, canvas.width, canvas.height)
-        // ctx.fillStyle=canvasBackColor
-        // ctx.fillRect(0, 0, canvas.width, canvas.height)
-        ctx.lineCap = lineCap
-        ctx.lineWidth=lineWidth
-    }
-    function setCanvasColor(){
-        ctx.clearRect(0,0,canvas.width,canvas.height)
-        canvasBackColor=(lineColor==='black')?'rgb(39,39,39)':lineColor
-        canvasColorDiv.style.backgroundColor=canvasBackColor
-        ctx.fillStyle=canvasBackColor
-        ctx.fillRect(0,0,canvas.width,canvas.height)
-    }
-
-    function download(){
-        let data = canvas.toDataURL("image/jpeg");
-        let img = document.createElement('img');
-        img.src = data
-        let a = document.createElement('a');
-        a.setAttribute("download", "paint.jpeg");
-        a.setAttribute("href", data);
-        a.appendChild(img)
-        a.click()
-    }
-
-    
-// we are activating the eraser
-let eraserCircle=document.getElementById('eraser')
-let tempColor=''
-    function activateEraser(){
-        tempColor=lineColor
-        eraserCircle.style.display=eraserCircle.style.display===''?'block':''
-        eraser=eraser?false:true
-    }
-// on mouse over on canvas
-   function moveEraser(){     
-            canvas.onmousemove=(e)=>{
-                if(!eraser){
-                canvas.style.cursor='crosshair'
-                return
-            }
-            canvas.style.cursor='none'
-            eraserCircle.style.top =e.clientY+ "px"
-            eraserCircle.style.left =e.clientX+ "px"
-            canvas.onmousedown=()=>{
-                if(!eraser)return
-                lineCap='square'
-                lineWidth=5
-                lineColor=canvasBackColor
-            }
-            canvas.onmouseup=()=>{
-                if(!eraser)return
-                lineCap='round'
-                lineWidth=2
-                lineColor=tempColor
-            }
-        }
-    }
-</script>
+  </body>
+  <script src="index.js"></script>
 </html>
