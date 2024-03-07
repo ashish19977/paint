@@ -4,6 +4,10 @@ let eraser = false;
 let lineWidth = 5;
 let lineCap = "round";
 
+const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+  navigator.userAgent
+);
+
 // set default colors for pencil and canvas bg
 document.querySelector(`#pencil-color-picker`).setAttribute("value", pencilColor);
 document.querySelector(`#canvas-color-picker`).setAttribute("value", canvasBgColor);
@@ -53,12 +57,11 @@ function setCanvasOrPencilColor(event, element) {
 
 // fires when we start drawing
 function draw(e) {
-  alert(e.buttons);
-  if (e.buttons !== 1) return;
+  if (isMobile && e.buttons !== 0) return;
+  else if (e.buttons !== 1) return;
   canvasCtx.beginPath();
   canvasCtx.lineCap = "round";
   canvasCtx.lineWidth = lineWidth;
-  console.log("lin wid", lineWidth);
   canvasCtx.strokeStyle = pencilColor;
   canvasCtx.moveTo(position.x, position.y);
   setPosition(e);
