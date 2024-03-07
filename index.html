@@ -12,6 +12,7 @@
         padding: 0;
         color: white;
         overscroll-behavior: none;
+        height: 100vh;
       }
       #container {
         box-sizing: border-box;
@@ -21,7 +22,7 @@
         display: grid;
         grid-row-gap: 0.5em;
         grid-template-rows: 2fr 18fr;
-        padding: 1em;
+        padding: 0.5em;
       }
       #canvas-container {
         display: grid;
@@ -29,6 +30,7 @@
         height: 100%;
       }
       #canvas {
+        display: block;
         box-sizing: border-box;
         width: 100%;
         height: 100%;
@@ -40,13 +42,20 @@
         display: grid;
         grid-gap: 0.5em;
         justify-content: center;
-        grid-template-rows: 1fr 1fr;
+        grid-template-rows: 0.75fr 1fr;
       }
-      #buttons-container {
-        display: grid;
-        grid-gap: 0.5em;
+      #colors-container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+      }
+      .buttons-container {
+        display: flex;
+        gap: 0.5em;
         justify-content: center;
-        grid-template-columns: 1fr 1fr 1fr;
+        align-items: center;
+        flex-wrap: wrap;
       }
       #eraser {
         position: absolute;
@@ -64,23 +73,29 @@
     <div id="container">
       <div id="colors-controls-container">
         <div id="colors-container">
-          Pencil color:
-          <input
-            type="color"
-            onchange="setCanvasOrPencilColor(event,'pencil')"
-            id="pencil-color-picker"
-          />
-          Canvas background color:
-          <input
-            type="color"
-            onchange="setCanvasOrPencilColor(event,'canvas')"
-            id="canvas-color-picker"
-          />
+          <div>
+            <span>Pencil:</span>
+            <input
+              type="color"
+              onchange="setCanvasOrPencilColor(event,'pencil')"
+              id="pencil-color-picker"
+            />
+          </div>
+          <div>
+            <span>Canvas:</span>
+            <input
+              type="color"
+              onchange="setCanvasOrPencilColor(event,'canvas')"
+              id="canvas-color-picker"
+            />
+          </div>
         </div>
-        <div id="buttons-container">
-          <button onclick="clearCanvas()">Clear Canvas</button>
+        <div class="buttons-container">
+          <button onclick="clearCanvas()">Clear</button>
           <button onclick="activateEraser()">Eraser</button>
           <button onclick="download()">Download</button>
+          <button onclick="handleBrushSizeChange('+')">+</button>
+          <button onclick="handleBrushSizeChange('-')">-</button>
         </div>
       </div>
       <div id="canvas-container">
