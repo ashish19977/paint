@@ -57,8 +57,7 @@ function setCanvasOrPencilColor(event, element) {
 
 // fires when we start drawing
 function draw(e) {
-  if (isMobile && e.buttons !== 0) return;
-  else if (e.buttons !== 1) return;
+  if (!isMobile && e.buttons !== 1) return;
   canvasCtx.beginPath();
   canvasCtx.lineCap = "round";
   canvasCtx.lineWidth = lineWidth;
