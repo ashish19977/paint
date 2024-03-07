@@ -23,9 +23,17 @@ canvasCtx.fillStyle = canvasBgColor;
 canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
 const position = { x: 0, y: 0 };
 
-document.addEventListener("mousedown", setPosition);
-document.addEventListener("mouseenter", setPosition);
-document.addEventListener("mousemove", draw);
+canvas.addEventListener("mousedown", setPosition);
+canvas.addEventListener("mouseenter", setPosition);
+canvas.addEventListener("mousemove", draw);
+canvas.addEventListener("mouseover", moveEraser);
+
+// mob
+canvas.addEventListener("touchstart", setPosition);
+canvas.addEventListener("touchmove", (e) => {
+  if (eraser) return moveEraser(e);
+  draw(e);
+});
 
 // resize the canvas when we resize the window
 const handleResize = () => {
@@ -37,11 +45,17 @@ const handleResize = () => {
 handleResize();
 window.addEventListener("resize", handleResize);
 
+const getClientXY = (e) => {
+  const ele = isMobile ? e?.touches?.[0] : e;
+  return ele ? { clientX: ele.clientX, clientY: ele.clientY } : {};
+};
+
 // set the postiton of current pencil
 function setPosition(e) {
+  const { clientX, clientY } = getClientXY(e);
   var rect = canvas.getBoundingClientRect();
-  (position.x = ((e.clientX - rect.left) / (rect.right - rect.left)) * canvas.width),
-    (position.y = ((e.clientY - rect.top) / (rect.bottom - rect.top)) * canvas.height);
+  (position.x = ((clientX - rect.left) / (rect.right - rect.left)) * canvas.width),
+    (position.y = ((clientY - rect.top) / (rect.bottom - rect.top)) * canvas.height);
 }
 
 // set pencil / canvas bg colors
@@ -60,7 +74,6 @@ function setCanvasOrPencilColor(event, element) {
 // fires when we start drawing
 function draw(e) {
   if (!isMobile && e.buttons !== 1) return;
-  if (isMobile) return alert("hey");
   canvasCtx.beginPath();
   canvasCtx.lineCap = "round";
   canvasCtx.lineWidth = lineWidth;
@@ -102,25 +115,37 @@ function activateEraser() {
 
 // move eraser
 function moveEraser() {
-  canvas.onmousemove = (e) => {
+  const onMove = (e) => {
     if (!eraser) {
       canvas.style.cursor = "crosshair";
       return;
     }
     canvas.style.cursor = "none";
-    eraserCircle.style.top = e.clientY + "px";
-    eraserCircle.style.left = e.clientX + "px";
+    const { clientX, clientY } = getClientXY(e);
+    eraserCircle.style.top = clientY + "px";
+    eraserCircle.style.left = clientX + "px";
+    draw(e);
   };
+  // web
+  canvas.addEventListener("mousemove", onMove);
+  canvas.addEventListener("touchmove", onMove);
 
-  canvas.onmousedown = () => {
+  // on web mouse down
+  const onDown = (e) => {
     if (!eraser) return;
     pencilColor = canvasBgColor;
   };
-  canvas.onmouseup = () => {
+  canvas.addEventListener("mousedown", onDown);
+  canvas.addEventListener("touchstart", onDown);
+
+  // on web mouse up or web touch end
+  const onUp = (e) => {
     if (!eraser) return;
     lineCap = "round";
     pencilColor = tempColor;
   };
+  canvas.addEventListener("mouseup", onUp);
+  canvas.addEventListener("touchend", onUp);
 }
 
 // increase/decrease pencil size
