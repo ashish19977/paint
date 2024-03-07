@@ -33,6 +33,8 @@ const handleResize = () => {
   canvas.style.height = `${clientHeight - 0.1}px`;
   canvas.style.width = `${window.innerWidth - 16.1}px`;
 };
+
+handleResize();
 window.addEventListener("resize", handleResize);
 
 // set the postiton of current pencil
@@ -58,6 +60,7 @@ function setCanvasOrPencilColor(event, element) {
 // fires when we start drawing
 function draw(e) {
   if (!isMobile && e.buttons !== 1) return;
+  if (isMobile) return alert("hey");
   canvasCtx.beginPath();
   canvasCtx.lineCap = "round";
   canvasCtx.lineWidth = lineWidth;
